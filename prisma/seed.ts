@@ -6,9 +6,14 @@ import {
   PropertyStatus,
   Role,
 } from "@prisma/client";
+import { PrismaPg } from "@prisma/adapter-pg";
 import bcrypt from "bcryptjs";
+import * as dotenv from "dotenv";
 
-const prisma = new PrismaClient();
+dotenv.config({ path: ".env.local" });
+
+const adapter = new PrismaPg({ connectionString: process.env.DATABASE_URL ?? "" });
+const prisma = new PrismaClient({ adapter });
 
 const cities = ["Jaipur", "Delhi", "Gurugram"];
 

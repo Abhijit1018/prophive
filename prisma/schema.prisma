@@ -1,0 +1,191 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum Role {
+  BUYER
+  SELLER
+  ADMIN
+}
+
+enum PropertyType {
+  APARTMENT
+  VILLA
+  PLOT
+  COMMERCIAL
+  PG_HOSTEL
+}
+
+enum PropertyMode {
+  SALE
+  RENT
+}
+
+enum FurnishingStatus {
+  FURNISHED
+  SEMI_FURNISHED
+  UNFURNISHED
+}
+
+enum PropertyStatus {
+  ACTIVE
+  PENDING
+  REJECTED
+  SOLD
+  RENTED
+}
+
+enum PlanType {
+  BUYER
+  SELLER
+}
+
+enum SubscriptionStatus {
+  ACTIVE
+  CANCELLED
+  EXPIRED
+}
+
+model User {
+  id           String    @id @default(cuid())
+  name         String
+  email        String    @unique
+  phone        String?
+  role         Role      @default(BUYER)
+  passwordHash String?
+  createdAt    DateTime  @default(now())
+
+  sellerProfile   SellerProfile?
+  buyerProfile    BuyerProfile?
+  properties      Property[]
+  subscriptions   Subscription[]
+  coupons         Coupon[]
+  inquiries       Inquiry[]
+  savedProperties SavedProperty[]
+}
+
+model SellerProfile {
+  id         String    @id @default(cuid())
+  userId     String    @unique
+  bio        String?
+  agency     String?
+  verifiedAt DateTime?
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model BuyerProfile {
+  id              String  @id @default(cuid())
+  userId          String  @unique
+  preferredCities String  @default("")
+  budgetMin       Float?
+  budgetMax       Float?
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model Property {
+  id          String            @id @default(cuid())
+  sellerId    String
+  title       String
+  description String
+  type        PropertyType
+  mode        PropertyMode
+  price       Float
+  area        Float
+  bhk         Int?
+  furnishing  FurnishingStatus?
+  city        String
+  address     String
+  pincode     String
+  landmark    String?
+  lat         Float?
+  lng         Float?
+  status      PropertyStatus    @default(PENDING)
+  viewCount   Int               @default(0)
+  isFeatured  Boolean           @default(false)
+  createdAt   DateTime          @default(now())
+
+  seller    User            @relation(fields: [sellerId], references: [id], onDelete: Cascade)
+  images    PropertyImage[]
+  inquiries Inquiry[]
+  savedBy   SavedProperty[]
+
+  @@index([city])
+  @@index([status])
+  @@index([sellerId])
+  @@index([mode])
+  @@index([type])
+}
+
+model PropertyImage {
+  id         String  @id @default(cuid())
+  propertyId String
+  url        String
+  isPrimary  Boolean @default(false)
+
+  property Property @relation(fields: [propertyId], references: [id], onDelete: Cascade)
+}
+
+model Subscription {
+  id            String             @id @default(cuid())
+  userId        String
+  planName      String
+  planType      PlanType
+  razorpaySubId String?
+  status        SubscriptionStatus @default(ACTIVE)
+  startAt       DateTime           @default(now())
+  endAt         DateTime
+  amount        Float
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@index([status])
+}
+
+model Coupon {
+  id          String   @id @default(cuid())
+  code        String   @unique
+  userId      String
+  discountPct Float
+  isUsed      Boolean  @default(false)
+  expiresAt   DateTime
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model Inquiry {
+  id         String   @id @default(cuid())
+  buyerId    String
+  propertyId String
+  message    String
+  createdAt  DateTime @default(now())
+
+  buyer    User     @relation(fields: [buyerId], references: [id], onDelete: Cascade)
+  property Property @relation(fields: [propertyId], references: [id], onDelete: Cascade)
+}
+
+model CityWaitlist {
+  id        String   @id @default(cuid())
+  email     String
+  city      String
+  createdAt DateTime @default(now())
+
+  @@unique([email, city])
+}
+
+model SavedProperty {
+  userId     String
+  propertyId String
+
+  user     User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  property Property @relation(fields: [propertyId], references: [id], onDelete: Cascade)
+
+  @@id([userId, propertyId])
+}

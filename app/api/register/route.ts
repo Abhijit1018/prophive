@@ -3,6 +3,7 @@ import { z } from "zod";
 import bcrypt from "bcryptjs";
 import { prisma } from "@/lib/prisma";
 import { generateEarlyCoupon } from "@/lib/coupon";
+import { sendWelcomeEmail } from "@/lib/email";
 
 const schema = z.object({
   name: z.string().min(2),
@@ -43,6 +44,8 @@ export async function POST(req: NextRequest) {
   });
 
   await generateEarlyCoupon(user.id, userNumber);
+
+  sendWelcomeEmail(user.name ?? "", user.email).catch(() => {});
 
   return NextResponse.json({ success: true, userId: user.id }, { status: 201 });
 }

@@ -522,29 +522,41 @@ function ListingsTab({ user }: { user: DashboardProps["user"] }) {
         <div className="space-y-4">
           {user.properties.map((p) => (
             <div key={p.id} className="bg-white dark:bg-gray-800/80 rounded-2xl border border-gray-100 dark:border-gray-700/50 overflow-hidden hover:shadow-lg hover:shadow-orange-500/5 transition-all">
-              <div className="flex items-center gap-4 p-5">
-                {/* Thumbnail */}
-                {p.images[0] ? (
-                  <div className="h-16 w-20 rounded-xl overflow-hidden flex-shrink-0 relative">
-                    <Image src={p.images[0].url} alt={p.title} fill className="object-cover" sizes="80px" />
+              <div className="p-5">
+                <div className="flex items-center gap-4">
+                  {/* Thumbnail */}
+                  {p.images[0] ? (
+                    <div className="h-16 w-20 rounded-xl overflow-hidden flex-shrink-0 relative">
+                      <Image src={p.images[0].url} alt={p.title} fill className="object-cover" sizes="80px" />
+                    </div>
+                  ) : (
+                    <div className="h-16 w-20 rounded-xl bg-gray-100 dark:bg-gray-700 flex items-center justify-center flex-shrink-0">
+                      <Building2 className="h-6 w-6 text-gray-400" />
+                    </div>
+                  )}
+                  <div className="flex-1 min-w-0">
+                    <Link href={`/property/${p.id}`} className="font-semibold hover:text-orange-600 transition-colors truncate block">{p.title}</Link>
+                    <p className="text-sm text-gray-400">{p.city} · ₹{p.price.toLocaleString("en-IN")}</p>
+                    <div className="flex items-center gap-3 mt-1.5 text-xs text-gray-400">
+                      <span className="flex items-center gap-1"><Eye className="h-3 w-3" /> {p.viewCount} views</span>
+                      <span className="flex items-center gap-1"><MessageSquare className="h-3 w-3" /> {p.inquiries.length} inquiries</span>
+                    </div>
+                    <div className="flex sm:hidden mt-2">
+                      <StatusBadge status={p.status} />
+                    </div>
                   </div>
-                ) : (
-                  <div className="h-16 w-20 rounded-xl bg-gray-100 dark:bg-gray-700 flex items-center justify-center flex-shrink-0">
-                    <Building2 className="h-6 w-6 text-gray-400" />
-                  </div>
-                )}
-                <div className="flex-1 min-w-0">
-                  <Link href={`/property/${p.id}`} className="font-semibold hover:text-orange-600 transition-colors truncate block">{p.title}</Link>
-                  <p className="text-sm text-gray-400">{p.city} · ₹{p.price.toLocaleString("en-IN")}</p>
-                  <div className="flex items-center gap-3 mt-1.5 text-xs text-gray-400">
-                    <span className="flex items-center gap-1"><Eye className="h-3 w-3" /> {p.viewCount} views</span>
-                    <span className="flex items-center gap-1"><MessageSquare className="h-3 w-3" /> {p.inquiries.length} inquiries</span>
+                  {/* Desktop-only actions */}
+                  <div className="hidden sm:flex items-center gap-2 flex-shrink-0">
+                    <StatusBadge status={p.status} />
+                    <Button variant="outline" size="sm" asChild className="h-8 text-xs"><Link href={`/dashboard/edit-listing/${p.id}`}>Edit</Link></Button>
+                    <Button variant="outline" size="sm" asChild className="h-8 text-xs"><Link href={`/property/${p.id}`}>View</Link></Button>
+                    <ListingActions propertyId={p.id} status={p.status} />
                   </div>
                 </div>
-                <div className="flex items-center gap-2 flex-shrink-0">
-                  <StatusBadge status={p.status} />
-                  <Button variant="outline" size="sm" asChild className="h-8 text-xs"><Link href={`/dashboard/edit-listing/${p.id}`}>Edit</Link></Button>
-                  <Button variant="outline" size="sm" asChild className="h-8 text-xs"><Link href={`/property/${p.id}`}>View</Link></Button>
+                {/* Mobile-only action strip */}
+                <div className="flex sm:hidden items-center gap-2 mt-3 pt-3 border-t border-gray-100 dark:border-gray-700/50">
+                  <Button variant="outline" size="sm" asChild className="flex-1 h-8 text-xs"><Link href={`/dashboard/edit-listing/${p.id}`}>Edit</Link></Button>
+                  <Button variant="outline" size="sm" asChild className="flex-1 h-8 text-xs"><Link href={`/property/${p.id}`}>View</Link></Button>
                   <ListingActions propertyId={p.id} status={p.status} />
                 </div>
               </div>

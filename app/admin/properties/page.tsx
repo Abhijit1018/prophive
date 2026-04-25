@@ -53,19 +53,26 @@ export default async function AdminPropertiesPage() {
           </div>
           <div className="space-y-3">
             {pending.map((p) => (
-              <div key={p.id} className="flex items-center gap-4 bg-white dark:bg-gray-900 rounded-xl p-4 border border-amber-100 dark:border-amber-800/20">
-                {p.images[0] ? (
-                  <img src={p.images[0].url} alt={p.title} className="h-12 w-16 rounded-lg object-cover flex-shrink-0" />
-                ) : (
-                  <div className="h-12 w-16 rounded-lg bg-gray-100 dark:bg-gray-800 flex items-center justify-center flex-shrink-0">
-                    <Building2 className="h-5 w-5 text-gray-400" />
+              <div key={p.id} className="bg-white dark:bg-gray-900 rounded-xl p-4 border border-amber-100 dark:border-amber-800/20">
+                <div className="flex items-center gap-4">
+                  {p.images[0] ? (
+                    <img src={p.images[0].url} alt={p.title} className="h-12 w-16 rounded-lg object-cover flex-shrink-0" />
+                  ) : (
+                    <div className="h-12 w-16 rounded-lg bg-gray-100 dark:bg-gray-800 flex items-center justify-center flex-shrink-0">
+                      <Building2 className="h-5 w-5 text-gray-400" />
+                    </div>
+                  )}
+                  <div className="flex-1 min-w-0">
+                    <Link href={`/property/${p.id}`} className="font-semibold hover:text-orange-600 transition-colors truncate block">{p.title}</Link>
+                    <p className="text-sm text-gray-400">{p.city} · ₹{p.price.toLocaleString("en-IN")} · by {p.seller.name}</p>
                   </div>
-                )}
-                <div className="flex-1 min-w-0">
-                  <Link href={`/property/${p.id}`} className="font-semibold hover:text-orange-600 transition-colors truncate block">{p.title}</Link>
-                  <p className="text-sm text-gray-400">{p.city} · ₹{p.price.toLocaleString("en-IN")} · by {p.seller.name}</p>
+                  <div className="flex-shrink-0 hidden sm:block">
+                    <PropertyModerationActions propertyId={p.id} currentStatus={p.status} />
+                  </div>
                 </div>
-                <PropertyModerationActions propertyId={p.id} currentStatus={p.status} />
+                <div className="sm:hidden mt-3 pt-3 border-t border-amber-100 dark:border-amber-800/20 flex justify-end">
+                  <PropertyModerationActions propertyId={p.id} currentStatus={p.status} />
+                </div>
               </div>
             ))}
           </div>

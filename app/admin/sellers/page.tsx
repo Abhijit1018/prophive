@@ -27,7 +27,7 @@ export default async function AdminSellersPage() {
       </div>
 
       {/* Stats */}
-      <div className="grid grid-cols-3 gap-4">
+      <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
         <div className="bg-white dark:bg-gray-900 rounded-xl p-4 border border-gray-100 dark:border-gray-800 flex items-center gap-3">
           <Store className="h-5 w-5 text-emerald-600" />
           <div>

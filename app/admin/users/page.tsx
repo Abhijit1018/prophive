@@ -28,7 +28,7 @@ export default async function AdminUsersPage() {
       </div>
 
       {/* Mini stats */}
-      <div className="grid grid-cols-3 gap-4">
+      <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
         <div className="bg-white dark:bg-gray-900 rounded-xl p-4 border border-gray-100 dark:border-gray-800 flex items-center gap-3">
           <div className="h-10 w-10 rounded-xl bg-orange-100 dark:bg-orange-900/20 flex items-center justify-center">
             <Shield className="h-5 w-5 text-orange-600" />

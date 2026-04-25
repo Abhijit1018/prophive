@@ -1,9 +1,10 @@
 "use client";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
+import { useState } from "react";
 import {
   LayoutDashboard, Users, Store, ShoppingBag, CreditCard,
-  Tag, Home, LogOut, ArrowLeft, Building2, ChevronRight, Shield
+  Tag, Home, LogOut, ArrowLeft, Building2, ChevronRight, Shield, Menu, X
 } from "lucide-react";
 import { signOut } from "next-auth/react";
 
@@ -17,13 +18,13 @@ const navItems = [
   { href: "/admin/coupons", label: "Coupons", icon: Tag },
 ];
 
-export default function AdminSidebar() {
+function NavContent({ onClose }: { onClose?: () => void }) {
   const pathname = usePathname();
 
   return (
-    <aside className="w-64 min-h-screen bg-gray-950 text-gray-100 flex flex-col border-r border-gray-800/50">
+    <>
       {/* Branding */}
-      <div className="px-6 py-5 border-b border-gray-800/50">
+      <div className="px-6 py-5 border-b border-gray-800/50 flex items-center justify-between">
         <div className="flex items-center gap-2.5">
           <div className="h-9 w-9 rounded-xl bg-gradient-to-br from-orange-500 to-orange-600 flex items-center justify-center shadow-lg shadow-orange-500/20">
             <Building2 className="h-5 w-5 text-white" />
@@ -37,6 +38,11 @@ export default function AdminSidebar() {
             </p>
           </div>
         </div>
+        {onClose && (
+          <button onClick={onClose} className="text-gray-500 hover:text-gray-300 transition-colors">
+            <X className="h-5 w-5" />
+          </button>
+        )}
       </div>
 
       {/* Navigation */}
@@ -50,6 +56,7 @@ export default function AdminSidebar() {
             <Link
               key={href}
               href={href}
+              onClick={onClose}
               className={`flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium transition-all ${
                 active
                   ? "bg-gradient-to-r from-orange-600 to-orange-500 text-white shadow-md shadow-orange-500/20"
@@ -68,6 +75,7 @@ export default function AdminSidebar() {
       <div className="px-3 py-4 border-t border-gray-800/50 space-y-1">
         <Link
           href="/"
+          onClick={onClose}
           className="flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm text-gray-500 hover:bg-gray-800/60 hover:text-gray-300 w-full transition-all"
         >
           <ArrowLeft className="h-4 w-4" />
@@ -81,6 +89,51 @@ export default function AdminSidebar() {
           Sign Out
         </button>
       </div>
-    </aside>
+    </>
+  );
+}
+
+export default function AdminSidebar() {
+  const [mobileOpen, setMobileOpen] = useState(false);
+
+  return (
+    <>
+      {/* Mobile top bar */}
+      <div className="md:hidden sticky top-0 z-30 flex items-center gap-3 bg-gray-950 px-4 py-3 border-b border-gray-800/50">
+        <button
+          onClick={() => setMobileOpen(true)}
+          className="text-gray-400 hover:text-gray-200 transition-colors"
+          aria-label="Open menu"
+        >
+          <Menu className="h-5 w-5" />
+        </button>
+        <div className="flex items-center gap-2">
+          <div className="h-7 w-7 rounded-lg bg-gradient-to-br from-orange-500 to-orange-600 flex items-center justify-center">
+            <Building2 className="h-4 w-4 text-white" />
+          </div>
+          <span className="text-white font-semibold text-sm" style={{ fontFamily: "'Playfair Display', serif" }}>
+            PropHive Admin
+          </span>
+        </div>
+      </div>
+
+      {/* Mobile overlay drawer */}
+      {mobileOpen && (
+        <div className="md:hidden fixed inset-0 z-50 flex">
+          <div
+            className="absolute inset-0 bg-black/60"
+            onClick={() => setMobileOpen(false)}
+          />
+          <aside className="relative z-10 w-72 max-w-[85vw] bg-gray-950 flex flex-col min-h-screen overflow-y-auto border-r border-gray-800/50">
+            <NavContent onClose={() => setMobileOpen(false)} />
+          </aside>
+        </div>
+      )}
+
+      {/* Desktop sidebar */}
+      <aside className="hidden md:flex flex-col w-64 min-h-screen bg-gray-950 text-gray-100 border-r border-gray-800/50">
+        <NavContent />
+      </aside>
+    </>
   );
 }

@@ -87,16 +87,16 @@ export default async function AdminDashboard() {
   return (
     <div className="space-y-8">
       {/* Header */}
-      <div className="flex items-center justify-between">
+      <div className="flex items-start justify-between gap-4">
         <div>
-          <h1 className="text-3xl font-bold" style={{ fontFamily: "'Playfair Display', serif" }}>
+          <h1 className="text-2xl md:text-3xl font-bold" style={{ fontFamily: "'Playfair Display', serif" }}>
             Admin Dashboard
           </h1>
           <p className="text-gray-500 dark:text-gray-400 mt-1 text-sm">
             Overview of your platform&apos;s performance
           </p>
         </div>
-        <div className="text-sm text-gray-400">
+        <div className="hidden sm:block text-sm text-gray-400 text-right flex-shrink-0">
           {new Date().toLocaleDateString("en-IN", { weekday: "long", day: "numeric", month: "long", year: "numeric" })}
         </div>
       </div>
